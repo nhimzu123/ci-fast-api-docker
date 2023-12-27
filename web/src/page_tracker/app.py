@@ -18,7 +18,7 @@ def index(response: Response):
         logging.exception("Redis error")
 
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        return "Sorry, something went wrong \N{pensive face}"
+        return "Sorry, something went wrong \N{thinking face}"
     else:
         return f"This page has been seen {page_views} times."
 
