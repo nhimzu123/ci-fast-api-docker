@@ -1,0 +1,35 @@
+# docker-compose.yml
+
+services:
+  redis:
+    image: "redis:latest"
+    volumes:
+      - "redis-volume:/data"
+  web-service:
+    build: ./web
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - APP_URL=http://web-service:8000
+    depends_on:
+      - redis
+  test-service:
+    profiles:
+      - testing
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    environment:
+      - REDIS_HOST=redis
+      - APP_URL=http://web-service:8000
+    depends_on:
+      - redis
+      - web-service
+    command: >
+      sh -c 'python -m pytest test/e2e/ -vv
+      --app-url $$APP_URL'
+
+
+volumes:
+  redis-volume:
